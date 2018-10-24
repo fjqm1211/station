@@ -1,0 +1,57 @@
+#include "ServerSocket.h"
+#include "SocketException.h"
+#include <string>
+
+int main ( int argc, int argv[] )
+{
+  std::cout << "-----DRONE BATTERY STATION-----\n\n";
+  std::cout << "running....\n\n";
+  std::cout << "-------------------------------\n\n";
+  std::cout << " Wailting Drone connection\n\n";
+
+  try
+    {
+      // Create the socket
+      ServerSocket server ( 30000 );
+
+      while ( true )
+	{
+
+	  ServerSocket new_sock;
+	  server.accept ( new_sock );
+
+	  try
+	    {
+	      while ( true )
+		{
+		  std::string data;
+		  new_sock >> data;
+		  std::cout << data;
+
+		  /*Drone requst landing permission*/
+		  if ( data.compare( "request" ) == 0 )
+		  {
+		   std::cout << " DONRE request landing permission \n\n";
+		   std::cout << " CHEKING...\n\n";
+		  }
+
+		  if (data.compare ( "quit") == 0)
+		  {
+		   std::cout << " DRONE IS DISCONNECTED....\n";
+		   break;
+		  }
+ 
+		  new_sock << data;
+		}
+	    }
+	  catch ( SocketException& ) {}
+
+	}
+    }
+  catch ( SocketException& e )
+    {
+      std::cout << "Exception was caught:" << e.description() << "\nExiting.\n";
+    }
+
+  return 0;
+}
